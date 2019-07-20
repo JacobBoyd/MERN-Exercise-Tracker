@@ -12,10 +12,21 @@ app.use(express.json()); //allow to parse json
 
 //connection to database
 const uri = process.env.ATLAS_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true })
+    .catch(error => console.log(`Connection error: ${error}`));
 const connection = mongoose.connection;
 connection.once('open', () => {
     console.log("MongoDB database connection established successfully");
+});
+
+const exercisesRouter = require('./routes/exercises');
+const usersRouter = require('./routes/users');
+
+app.use('/exercises', exercisesRouter);
+app.use('/users', usersRouter);
+
+app.get('/', (req, res) => {
+    res.send(200, 'Hello World');
 });
 
 app.listen(port, () => {
